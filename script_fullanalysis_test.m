@@ -1,8 +1,24 @@
+%This script will take the data given to it and for each fish extract 780
+%features that best describe the data. It will then find all the unique
+%experimental treatment groups (compound and concentration) and group fish
+%that were treated the same together and average their features. It will
+%then compute the 780 features associated with the fish by finding all
+%possible pairings and taking ratios.
+
+%To use this script run it. A dialogue box will pop up: select the data
+%file, then the key file and it should run fine after that.
+
 close all
 clear all
 
-filename_data = fullfile('C:\Users\harri_000\Documents\Zebrafish Project\Zebrafish-behavior\Data','2016-01-27-p0003-S01-01-DHI-1837-MI.csv');
-filename_key = fullfile('C:\Users\harri_000\Documents\Zebrafish Project\Zebrafish-behavior\Data','2016-01-27-p0003-S01-01-DHI-1837-key_1.csv');
+% filename_data = fullfile('C:\Users\harri_000\Documents\Zebrafish Project\Zebrafish-behavior\Data','2016-01-27-p0003-S01-01-DHI-1837-MI.csv');
+% filename_key = fullfile('C:\Users\harri_000\Documents\Zebrafish Project\Zebrafish-behavior\Data','2016-01-27-p0003-S01-01-DHI-1837-key_1.csv');
+
+[FileName_data,PathName_data] = uigetfile('.csv');
+[FileName_key,PathName_key] = uigetfile('.csv');
+
+filename_data = fullfile(PathName_data, FileName_data);
+filename_key = fullfile(PathName_key, FileName_key);
 
 [NUM,TXT,RAW] = xlsread(filename_data);
 [unique_conditions, condition_idx, condition_cell] = parseKey(filename_key);
