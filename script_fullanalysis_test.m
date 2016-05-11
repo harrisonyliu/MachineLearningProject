@@ -48,6 +48,8 @@ condition_names = unique_conditions;
 num_conditions = numel(condition_names);
 
 %Now let's extract features for each fish
+%Note: fish_features contains all the raw data for all the fish,
+%condition_idx contains information on which fish belongs to what condition
 numfeat = 780;
 fish_features = zeros(size(NUM,1),numfeat);
 for i = 1:size(NUM,1)
