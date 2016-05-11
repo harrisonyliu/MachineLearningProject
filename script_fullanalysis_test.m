@@ -21,17 +21,27 @@ filename_data = fullfile(PathName_data, FileName_data);
 filename_key = fullfile(PathName_key, FileName_key);
 
 [NUM,TXT,RAW] = xlsread(filename_data);
-[unique_conditions, condition_idx, condition_cell] = parseKey(filename_key);
+% [unique_conditions, condition_idx, condition_cell] =
+% parseKey(filename_key,'chemID','concentration'); %This is for the parsing
+% data
+[unique_conditions, condition_idx, condition_cell] = parseKey(filename_key,'DMSO','x0'); %This is for the haloperidol data
 
-% %We need to do some basic pre-processing: let's baseline the fish by taking
-% %the initial assay 1 (no stimulus) and subtracting that from all the data
-% %such that the baseline activity of the fish is removed
-% fishdata = zeros(size(NUM));
-% for i = 1:size(NUM,1)
-%     temp = NUM(i,:); 
-%     baseline = mean(temp(1:750)); %This is the baseline activity of fish i
-%     fishdata(i,:) = temp - baseline;
-% end
+%% Plotting section, optional
+%Here let's plot the data just to ensure everything looks good (optional,
+%comment out if not necessary)
+colors = 'rgbk';
+temp_data = cell(numel(unique_conditions),1);
+temp_avg = temp_data;
+figure(); hold on;
+for i = 1:numel(unique_conditions)
+    temp = NUM(condition_idx{i},:);
+    temp_data{i} = temp;
+    temp_avg{i} = mean(temp);
+    plot(1:length(temp),mean(temp),[colors(i) '-']);
+end
+legend(unique_conditions);
+
+%% Feature extraction
 
 %Now let's create a matrix in which we can store all that (averaged) data
 condition_names = unique_conditions;
