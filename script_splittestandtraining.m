@@ -24,5 +24,13 @@ temp_train([test_fish_halo test_fish_dmso],:) = [];
 train_set = temp_train;
 
 %Now let's identify the groups
-groups_train
-groups_test = [ones(testSetSize
+groups_train = [ones(trainSetSize,1); zeros(trainSetSize,1)];
+groups_test = [ones(testSetSize,1); zeros(testSetSize,1);];
+
+%For posterity, let's also save the raw data that belongs to each set
+test_raw = [NUM(test_fish_halo,:); NUM(test_fish_dmso,:)];
+temp_raw = NUM;
+temp_raw([test_fish_halo test_fish_dmso],:) = [];
+train_raw = temp_raw;
+
+% save('testing_training.mat','groups_test','groups_train','test_set','train_set', 'test_raw','train_raw');
