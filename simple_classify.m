@@ -20,3 +20,10 @@ accuracy = mean(strcmp(Ypred,Ytest))
 
 Yresub = classify(Xtrain,Xtrain,Ytrain,'diaglinear');
 resub_accuracy = mean(strcmp(Yresub,Ytrain))
+
+%% Decision tree using all data as features
+t = classregtree(Xtrain, Ytrain);
+class = eval(t,Xtest);
+acc = mean(strcmp(class,Ytest));
+['The accuracy of decision tree is: ' num2str(acc)]
+view(t)
