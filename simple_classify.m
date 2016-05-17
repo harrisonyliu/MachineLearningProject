@@ -1,9 +1,12 @@
-data = csvread('/Users/bendichter/Box Sync/MachineLearningProject/Data/Haloperidol_Data/consolidated_data.csv');
-[~,txt] = xlsread('/Users/bendichter/Box Sync/MachineLearningProject/Data/Haloperidol_Data/consolidated_key.xls');
+% data = csvread('/Users/bendichter/Box Sync/MachineLearningProject/Data/Haloperidol_Data/consolidated_data.csv');
+% [~,txt] = xlsread('/Users/bendichter/Box Sync/MachineLearningProject/Data/Haloperidol_Data/consolidated_key.xls');
+fname_data = fullfile('C:\Users\harri_000\Documents\Zebrafish Project\Zebrafish-behavior\MachineLearningProject\Data\Haloperidol_Data','consolidated_data.csv');
+fname_key = fullfile('C:\Users\harri_000\Documents\Zebrafish Project\Zebrafish-behavior\MachineLearningProject\Data\Haloperidol_Data', 'consolidated_key.csv');
+data = csvread(fname_data);
+[~,txt,~] = xlsread(fname_key);
 DMSO = txt(2:end,3);
 
-
-N = size(consolidateddata,1);
+N = size(data,1);
 shuffle = randperm(N);
 X = data(shuffle,:);
 Y = DMSO(shuffle);
