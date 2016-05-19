@@ -20,13 +20,17 @@ conc_cell = strfind(TXT_key(1,:),str2);
 conc_idx = find(~cellfun(@isempty,conc_cell));
 conc = NUM_key(:,conc_idx);
 
+%Some manipulation of conc to make sure no '.' exist
+conc = cellstr(num2str(conc));
+conc = strrep(conc,'.','_');
+conc = strrep(conc,' ','');
+
 %Now that we know the chemicals and concentrations, let's concatenate them
 %together to form a final treatment condition matrix
-condition_cell = cell(1,length(conc));
+condition_cell = cell(length(conc),1);
 for i = 1:length(conc)
-    condition_cell{i} = [chem{i} num2str(conc(i))];
+    condition_cell{i} = [chem{i} conc{i}];
 end
-
 %Now let's find out the unique conditions (since there will be many
 %replicates of each condition
 unique_conditions = unique(condition_cell)';

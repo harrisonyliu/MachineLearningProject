@@ -3,8 +3,21 @@
 fname_data = fullfile('C:\Users\harri_000\Documents\Zebrafish Project\Zebrafish-behavior\MachineLearningProject\Data\Haloperidol_Data','consolidated_data.csv');
 fname_key = fullfile('C:\Users\harri_000\Documents\Zebrafish Project\Zebrafish-behavior\MachineLearningProject\Data\Haloperidol_Data', 'consolidated_key.csv');
 data = csvread(fname_data);
+data_origbattery = data;
 [~,txt,~] = xlsread(fname_key);
 DMSO = txt(2:end,3);
+
+%Let's do some filtering here just for numerical stability (remove high
+%frequency noise in the data
+% newdata = zeros(size(data,1),size(data,2)/5);
+% for i = 1:size(data,1)
+%     temp = data(i,:);
+%     temp = resample(temp,1,5);
+%     newdata(i,:) = temp;
+% end
+% figure();plot(1:5:size(data,2),newdata(3,:),'g-',1:size(data,2),data(3,:),'r-');
+% legend('Smoothed Data','Original Data');
+% data = newdata;
 
 N = size(data,1);
 shuffle = randperm(N);
@@ -27,3 +40,31 @@ class = eval(t,Xtest);
 acc = mean(strcmp(class,Ytest));
 ['The accuracy of decision tree is: ' num2str(acc)]
 view(t)
+
+%% Just some testing to make sure the new and old data are the same
+baseline = median(median(data));
+data_temp = data - baseline;
+old_data = mean(data_temp(1:12,[1:3750,4501:end]));
+
+load('haloperidol_doseresponse.mat');
+% data_originalformat = data(:,[1:1500,2251:11250]);
+data_originalformat = data(:,[1:1500,2251:4500,5251:11250]);
+baseline = median(median(data_originalformat));
+data_originalformat = data_originalformat - baseline;
+new_data = mean(data_originalformat(1:12,:));
+
+%Note: timepoints 1-750 are the baseline readings for the fish so we can
+%normalize for fish activity using these readings
+new_activity = mean(new_data(1:750));
+old_activity = mean(old_data(1:750));
+%Normalize the data by their baseline activity
+new_data = new_data ./ new_activity;
+old_data = old_data ./ old_activity;
+
+figure();plot(1:5:size(old_data,2),resample(old_data,1,5),'b-',1:5:size(new_data,2),resample(new_data,1,5),'g-');
+title('Comparing old and new data');legend('Old Data','New Data');
+
+%% Saving some data for future use
+%Saving the raw fish and conditions data
+condition_origbattery = DMSO;
+save('originaldata.mat','data_origbattery','condition_origbattery','Xtrain','Ytrain');
