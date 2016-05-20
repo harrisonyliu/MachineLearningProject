@@ -29,7 +29,7 @@ conc = strrep(conc,' ','');
 %together to form a final treatment condition matrix
 condition_cell = cell(length(conc),1);
 for i = 1:length(conc)
-    condition_cell{i} = [chem{i} conc{i}];
+    condition_cell{i} = [chem{i} '_' conc{i}];
 end
 %Now let's find out the unique conditions (since there will be many
 %replicates of each condition
