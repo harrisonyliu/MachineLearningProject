@@ -3,7 +3,7 @@ clear all
 
 %% Data manipulation
 %The problem with this dataset is that new assays were added to the old
-%batter which was what the classifier was originally trained on. To get
+%battery which was what the classifier was originally trained on. To get
 %around this problem we will create a synthetic dataset by cutting and
 %pasting together the original battery of assays together from the new
 %data. Note: we also remove the VSR2 assay from the data since the old and

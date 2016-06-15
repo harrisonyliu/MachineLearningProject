@@ -7,7 +7,7 @@ data_origbattery = data;
 [~,txt,~] = xlsread(fname_key);
 DMSO = txt(2:end,3);
 
-% rng(6); %For reproducibility (disable to have random selection)
+rng(1); %For reproducibility (disable to have random selection)
 
 N = size(data,1);
 shuffle = randperm(N);
@@ -30,9 +30,27 @@ Ytrain = Y(1:cut,:);
 %Showing some graphs of the testing data
 halo_idx = strcmp(Ytrain,'Haloperidol'); halo_data = Xtrain(halo_idx,:);
 dmso_idx = strcmp(Ytrain,'DMSO'); dmso_data = Xtrain(dmso_idx,:);
+dmso_data_resample = Xtrain_resample(dmso_idx,:);halo_data_resample = Xtrain_resample(halo_idx,:);
 dmso = mean(dmso_data); halo = mean(halo_data);
 figure();plot(1:size(Xtrain,2), dmso, 'b-', 1:size(Xtrain,2), halo,'r-');
-title('Averaged normalized features');legend('dmso','halo');    
+title('Averaged data');legend('dmso','halo');
+xlabel('Time');ylabel('Motion Index');
+
+%% Just some figures for my presentation ignore
+% figure();figure();plot(1:size(Xtrain,2), dmso, 'b-');
+% xlabel('Time');ylabel('Motion Index');
+% axis([1 10500 min(dmso) 1.05*max(dmso)]);
+% figure();figure();plot(1:size(Xtrain,2), halo,'r-');
+% xlabel('Time');ylabel('Motion Index');
+% axis([1 10500 min(dmso) 1.05*max(dmso)]);
+
+%% Back to classification
+
+%Plots of before/after resampling
+figure();plot(1:size(Xtrain,2), dmso, 'b-', 1:5:size(Xtrain,2), mean(dmso_data_resample),'r-');
+title('Averaged data');legend('original','5x downsample','Location','best');
+xlabel('Time');ylabel('Motion Index');
+axis([1 10500 min(dmso) 1.05*max(dmso)]);
 
 %% Now let's test out some classification algorithms
 

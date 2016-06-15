@@ -4,6 +4,8 @@ clear all
 load('features_and_groups.mat');
 load('feature_names.mat');
 
+rng(1);
+
 %First split into training and testing sets
 idx = randperm(numel(conditions));
 train_idx = idx(1:end-40); test_idx = idx(end-39:end);
@@ -65,6 +67,27 @@ important_err = sortedErr(1:5)
 important_idx = sortingIdx(1:5)
 %Now for margins (more raised margins = better predictor)
 deltaErr_margin = BaggedEnsemble.OOBPermutedVarCountRaiseMargin; %This will return the increase in error when a given feature is permuted (the larger the value, the more important the predictor.
-[sortedErr,sortingIdx] = sort(deltaErr,'descend');
+[sortedErr,sortingIdx] = sort(deltaErr_margin,'descend');
 important_err_margin = sortedErr(1:5)
 important_idx_margin = sortingIdx(1:5)
+
+%% Feature importance analysis
+%Let's create a 1D heatmap showing which features are the most important
+kernel = gausswin(5)';
+err_data = zeros(size(deltaErr));
+numUseful = sum(deltaErr>0); %This is the number of features which were useful
+for i = 1:numUseful
+    idx = sortingIdx(i); %This is the index of a useful feature
+    err_data(idx-2:idx+2) = err_data(idx-2:idx+2) + kernel.*sortedErr(i);
+end
+h = heatmap(err_data,1:780);
+
+%% Principal Component Analysis
+temp_data = [dmso_data;halo_data];
+[coeff, score, latent] = pca(temp_data);
+num_dmso = size(dmso_data,1);
+figure();plot(score(1:num_dmso,1),score(1:num_dmso,2),'bo',score(num_dmso+1:end,1),score(num_dmso+1:end,2),'g*');
+legend('DMSO','Halo');
+title('Principal Components Analysis of Halo and DMSO data');
+xlabel('Principal Component 1');ylabel('Principal Component 2');
+
