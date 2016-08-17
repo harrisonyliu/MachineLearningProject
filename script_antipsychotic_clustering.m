@@ -101,6 +101,16 @@ xlabel('Time');ylabel('Motion Index (Normalized and resampled)');
 legend('Haloperidol', 'Clozapine', 'Thioridazine');
 axis([1 numData min(mean(data_halo(1:12,:))) max(mean(data_halo(1:12,:)))]);
 
+% %First let's do a little bit of data sorting
+% temp = conditions_halo;
+% temp = strrep(conditions_halo_sort,'Haloperidol_','');
+% temp = strrep(conditions_halo_sort,'DMSO_','');
+% temp = strrep(conditions_halo_sort,'_','.');
+% [conc_sorted, conc_idx] = sort(str2double(temp));
+% conditions_halo_sorted = conditions_halo(conc_idx);
+% data_halo_sorted = data_halo(conc_idx,:); 
+
+
 %Great! We don't have a lot of data to train with, so why don't we start
 %off by just seeing if we can track how a drug changes as its concentration
 %decreases. Let's start off by investigating haloperidol...
@@ -110,6 +120,10 @@ create_PCA_doseresponse(conditions_clo,data_clo);
 title('PCA analysis of varying dose, clozapine');
 create_PCA_doseresponse(conditions_thior,data_thior);
 title('PCA analysis of varying dose, thioridazine');
+
+create_PCA_doseresponse([conditions_halo; conditions_clo; conditions_thior],...
+    [data_halo; data_clo; data_thior]);
+title('PCA analysis of varying dose, Aggregated');
 
 %% For this section let's apply the clustering to different drugs!
 %Let's use 25uM as the standard concentration each of haloperidol,
@@ -142,11 +156,15 @@ pcaCondition_thior = repmat(cellstr('Thioridazine_25'),size(pcaData_thior_25,1),
 %Now aggregate everything together and plot the results!
 pcaData = [pcaData_dmso; pcaData_halo_25; pcaData_clo_25; pcaData_thior_25];
 pcaCondition = [pcaCondition_dmso; pcaCondition_halo; pcaCondition_clo; pcaCondition_thior];
-create_PCA_doseresponse(pcaCondition, pcaData);
+% create_PCA_doseresponse(pcaCondition, pcaData);
+create_PCA_doseresponse3d([conditions_halo; conditions_clo; conditions_thior],...
+    [data_halo; data_clo; data_thior]); axis vis3d; grid on;
+OptionZ.FrameRate = 30;OptionZ.Duration = 10;
+CaptureFigVid([0 15; 360 15], '3D_PCA_movie_antipsychotics',OptionZ); 
 
 %% Here we create some random forest classifiers to see how well we can classify pairs of drugs
 %Based upon the previous PCA results we would expect that halo would be the
-%hardest to distinguish from the other antipsychotics
+%   hardest to distinguish from the other antipsychotics
 
 %First let's see if we can classify each of the drugs from dmso
 rng = 1;
@@ -239,7 +257,7 @@ acc = mean(strcmp(class,Ytest));
 %% Let's plot some of the drug data vs. each other as well as vs. DMSO
 temp1 = mean(pcaData_dmso); temp2 = mean(pcaData_halo_25);
 temp3 = mean(pcaData_clo_25); temp4 = mean(pcaData_thior_25); 
-plot(1:numData,temp1,'k-',1:numData,temp2,'g-',1:numData,temp3,'m-',1:numData,temp4,'c-');
+figure();plot(1:numData,temp1,'k-',1:numData,temp2,'g-',1:numData,temp3,'m-',1:numData,temp4,'c-');
 title('Averaged, normalized data');xlabel('Time');
 ylabel('Normalized motion index');legend('DMSO','Halo','Clo','Thior');
 axis([1 numData min([temp1 temp2 temp3 temp4]) max([temp1 temp2 temp3 temp4])]);

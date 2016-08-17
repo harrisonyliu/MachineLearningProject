@@ -11,12 +11,13 @@ function [normalized_data] = normalizeFishData(input,dmso_idx,resample_rate)
 %active than others.
 
 ctrl_data = input(dmso_idx,:);
-offset = median(median(ctrl_data)); %There are multiple dmso controls, first average them together to get an averaged timecourse, then find the median of that timecourse to find the offset
+offset = median(input,2); %There are multiple dmso controls, first average them together to get an averaged timecourse, then find the median of that timecourse to find the offset
+normalized_data = input - repmat(offset,1,size(input,2));
 
-baseline_data = input(dmso_idx,1:750/resample_rate); %The first 750 timepoints have no stimuli, this represent the baseline activity of the fish
-scaling = sqrt(var(mean(baseline_data))); %This will rescale the data to control for fish spawns that are more/less active than normal
+baseline_data = normalized_data(dmso_idx,1:750/resample_rate); %The first 750 timepoints have no stimuli, this represent the baseline activity of the fish
+scaling = mean(sqrt(var(baseline_data'))); %This will rescale the data to control for fish spawns that are more/less active than normal
 % scaling = mean(mean(baseline_data));
 
-normalized_data = (input - offset) ./ scaling;
+normalized_data = normalized_data ./ scaling;
 
 % normalized_data = (input - offset);% ./ scaling;

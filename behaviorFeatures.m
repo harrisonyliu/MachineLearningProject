@@ -53,7 +53,7 @@ end
 feat_final = reshape(feat_expand',1,numel(feat_expand));
 names_final = reshape(names_expand',1,numel(names_expand));
 %Second combos as interassay combinations
-combos_second = combntns(1:12,2);
+combos_second = combntns(1:11,2);
 for i = 1:size(combos_second,1)
     idx1 = combos_second(i,1); idx2 = combos_second(i,2);
     temp_divide = feat_expand(idx1,:) ./ feat_expand(idx2,:);
